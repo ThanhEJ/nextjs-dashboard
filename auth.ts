@@ -6,6 +6,13 @@ import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 
+console.log('DEBUG ENV CHECK:', {
+    AUTH_SECRET_len: process.env.AUTH_SECRET?.length ?? 0,
+    MY_AUTH_SECRET_len: process.env.MY_AUTH_SECRET?.length ?? 0,
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+});
+
 const sql = postgres(process.env.POSTGRES_NEW_POSTGRES_URL!, { ssl: 'require' });
 
 async function getUser(email: string): Promise<User | undefined> {
@@ -21,8 +28,7 @@ async function getUser(email: string): Promise<User | undefined> {
 export const { auth, signIn, signOut, handlers } = NextAuth({
     ...authConfig,
     trustHost: true,
-    secret: process.env.AUTH_SECRET ?? process.env.MY_AUTH_SECRET,
-    providers: [
+    secret: process.env.AUTH_SECRET || process.env.MY_AUTH_SECRET || 'temporary-debug-secret-do-not-use-in-real-prod', providers: [
         Credentials({
             async authorize(credentials) {
                 const parsedCredentials = z
