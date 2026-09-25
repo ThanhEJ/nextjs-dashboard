@@ -4,10 +4,10 @@ import { authConfig } from './auth.config';
 export const proxy = NextAuth({
     ...authConfig,
     trustHost: true,
+    secret: process.env.AUTH_SECRET || process.env.MY_AUTH_SECRET,
 }).auth;
 export default proxy;
 
 export const config = {
-    // https://nextjs.org/docs/app/api-reference/file-conventions/proxy#matcher
     matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 };
